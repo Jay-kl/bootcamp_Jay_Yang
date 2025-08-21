@@ -1,0 +1,14 @@
+# Ignore environment files
+.env
+project/.env
+
+# Common local files
+.env.local
+.env.*.local
+*.env
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+
+.DS_Store
+class_materials/

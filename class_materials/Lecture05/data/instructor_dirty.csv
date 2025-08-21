@@ -1,6 +1,0 @@
-numeric_col,category_col,price,date_str,category
-10.0,A,$100,2025-08-01,Electronics
-,B,$200,2025-08-02,Furniture
-40.0,A,$150,,Toys
-55.0,B,,2025-08-04,Clothing
-70.0,C,$250,2025-08-05,

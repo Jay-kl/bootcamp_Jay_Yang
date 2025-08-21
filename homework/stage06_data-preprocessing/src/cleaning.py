@@ -1,100 +1,111 @@
-# Cleaning py
-# df = cleaning.fill_missing_median(df, ['col1','col2'])
-# df = cleaning.drop_missing(df, threshold=0.5)
-# df = cleaning.normalize_data(df, ['col1','col2'])
+"""Utility functions for common data cleaning tasks.
 
-# src/cleaning.py
+This module provides helpers to fill missing values, drop rows with missing
+data under different rules, and normalize numeric columns. Behavior is kept
+simple and explicit to avoid surprises.
+"""
 
-import pandas as pd
+from typing import Optional, Sequence
+
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler, StandardScaler  # type: ignore[reportMissingImports]
 
-def fill_missing_median(df, columns=None):
-    """
-    Fill missing numeric values with the median of each column.
-    
-    Parameters:
-        df (pd.DataFrame): Input DataFrame
-        columns (list, optional): Columns to fill. If None, use numeric columns.
-    
-    Returns:
-        pd.DataFrame: DataFrame with missing values filled
-    """
-    df_copy = df.copy()
+__all__ = [
+    'fill_missing_median',
+    'drop_missing',
+    'normalize_data',
+    'fill_missing_general',
+]
+
+
+def _select_numeric_columns(df: pd.DataFrame, columns: Optional[Sequence[str]]) -> list[str]:
+    """Return numeric column names from ``df`` or the provided ``columns`` as a list."""
     if columns is None:
-        columns = df_copy.select_dtypes(include=np.number).columns
-    for col in columns:
-        df_copy[col] = df_copy[col].fillna(df_copy[col].median())
+        return list(df.select_dtypes(include=np.number).columns)
+    return list(columns)
+
+def fill_missing_median(df: pd.DataFrame, columns: Optional[Sequence[str]] = None) -> pd.DataFrame:
+    """Fill missing values in numeric columns with the column median.
+
+    - If ``columns`` is None, all numeric columns are targeted.
+    - Otherwise, only the specified columns are processed.
+    """
+
+    df_copy = df.copy()
+    columns_to_fill = _select_numeric_columns(df_copy, columns)
+    if columns_to_fill:
+        df_copy[columns_to_fill] = df_copy[columns_to_fill].apply(lambda s: s.fillna(s.median()))
     return df_copy
 
 
-def drop_missing(df, columns=None, threshold=None):
+def drop_missing(
+    df: pd.DataFrame,
+    columns: Optional[Sequence[str]] = None,
+    threshold: Optional[float] = None,
+) -> pd.DataFrame:
+    """Drop rows with missing values according to the provided rule.
+
+    - If ``columns`` is provided, drop rows with NA in any of these columns.
+    - Else if ``threshold`` is provided, keep rows that have at least
+      ``int(threshold * n_columns)`` non-NA values.
+    - Else, drop any rows with at least one NA across all columns.
     """
-    Drop rows with missing values.
-    
-    Parameters:
-        df (pd.DataFrame): Input DataFrame
-        columns (list, optional): Drop rows if any of these columns are missing.
-        threshold (float, optional): Keep rows with at least `threshold * n_columns` non-null values.
-    
-    Returns:
-        pd.DataFrame: DataFrame with rows dropped
-    """
+
     df_copy = df.copy()
     if columns is not None:
         return df_copy.dropna(subset=columns)
     if threshold is not None:
-        return df_copy.dropna(thresh=int(threshold * df_copy.shape[1]))
+        required_non_na = int(threshold * df_copy.shape[1])
+        return df_copy.dropna(thresh=required_non_na)
     return df_copy.dropna()
 
 
-def normalize_data(df, columns=None, method='minmax'):
+def normalize_data(
+    df: pd.DataFrame,
+    columns: Optional[Sequence[str]] = None,
+    method: str = 'minmax',
+) -> pd.DataFrame:
+    """Normalize selected columns using a scaling ``method``.
+
+    - If ``columns`` is None, all numeric columns are scaled.
+    - ``method`` must be 'minmax' or 'standard'.
     """
-    Normalize numeric data using MinMax or Standard scaling.
-    
-    Parameters:
-        df (pd.DataFrame): Input DataFrame
-        columns (list, optional): Columns to normalize. If None, use numeric columns.
-        method (str): 'minmax' or 'standard'
-    
-    Returns:
-        pd.DataFrame: DataFrame with normalized columns
-    """
+
     df_copy = df.copy()
-    if columns is None:
-        columns = df_copy.select_dtypes(include=np.number).columns
-    
+    columns_to_scale = _select_numeric_columns(df_copy, columns)
+
     if method == 'minmax':
         scaler = MinMaxScaler()
     elif method == 'standard':
         scaler = StandardScaler()
     else:
         raise ValueError("method must be 'minmax' or 'standard'")
-    
-    df_copy[columns] = scaler.fit_transform(df_copy[columns])
+
+    df_copy[columns_to_scale] = scaler.fit_transform(df_copy[columns_to_scale])
     return df_copy
 
-#fill missing
-def fill_missing_general(df):
+def fill_missing_general(df: pd.DataFrame) -> pd.DataFrame:
+    """Fill missing values by column type.
+
+    - Numeric columns: fill with median of each column
+    - Object (categorical) columns: fill with 'unknown'
+    - Datetime columns: forward then backward fill
     """
-    Fill missing values for numeric, categorical, and datetime columns.
-    """
+
     df_copy = df.copy()
 
-    # Numeric → median
     num_cols = df_copy.select_dtypes(include=np.number).columns
-    for col in num_cols:
-        df_copy[col] = df_copy[col].fillna(df_copy[col].median())
+    if len(num_cols) > 0:
+        df_copy[num_cols] = df_copy[num_cols].apply(lambda s: s.fillna(s.median()))
 
-    # Categorical → "unknown"
-    cat_cols = df_copy.select_dtypes(include="object").columns
-    for col in cat_cols:
-        df_copy[col] = df_copy[col].fillna("unknown")
+    cat_cols = df_copy.select_dtypes(include='object').columns
+    if len(cat_cols) > 0:
+        df_copy[cat_cols] = df_copy[cat_cols].fillna('unknown')
 
-    # Datetime → forward fill then backward fill
-    dt_cols = df_copy.select_dtypes(include="datetime64[ns]").columns
-    for col in dt_cols:
-        df_copy[col] = df_copy[col].ffill().bfill()
+    dt_cols = df_copy.select_dtypes(include='datetime64[ns]').columns
+    if len(dt_cols) > 0:
+        df_copy[dt_cols] = df_copy[dt_cols].ffill().bfill()
 
     return df_copy
 
