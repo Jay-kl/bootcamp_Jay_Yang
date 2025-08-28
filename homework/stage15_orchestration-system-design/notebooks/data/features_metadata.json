@@ -1,0 +1,42 @@
+{
+  "run_at": "2025-08-28T15:48:18.258950",
+  "input_path": "data/sample_validated_data.parquet",
+  "output_path": "data/features.parquet",
+  "input_records": 100,
+  "output_records": 100,
+  "features_created": [
+    "S_LI_INITIATIVESELLRATE_5min_ma",
+    "large_order_imbalance",
+    "high_activity",
+    "S_LI_INITIATIVEBUYRATE_5min_ma",
+    "buy_sell_ratio"
+  ],
+  "processing_time_seconds": 0.01882767677307129,
+  "config_used": {},
+  "data_quality": {
+    "null_rates": {
+      "S_LI_INITIATIVEBUYRATE": 0.0,
+      "S_LI_INITIATIVESELLRATE": 0.0,
+      "S_LI_LARGEBUYRATE": 0.0,
+      "S_LI_LARGESELLRATE": 0.0,
+      "timestamp": 0.0,
+      "buy_sell_ratio": 0.0,
+      "large_order_imbalance": 0.0,
+      "S_LI_INITIATIVEBUYRATE_5min_ma": 0.04,
+      "S_LI_INITIATIVESELLRATE_5min_ma": 0.04,
+      "high_activity": 0.0
+    },
+    "feature_correlations": {
+      "S_LI_INITIATIVEBUYRATE": -0.03403250097882253,
+      "S_LI_INITIATIVESELLRATE": 1.0,
+      "S_LI_LARGEBUYRATE": -0.1463536203930928,
+      "S_LI_LARGESELLRATE": -0.01178258064763881,
+      "timestamp": 0.07831713113167767,
+      "buy_sell_ratio": -0.7015119825663776,
+      "large_order_imbalance": -0.08632939463570351,
+      "S_LI_INITIATIVEBUYRATE_5min_ma": 0.07344615492101894,
+      "S_LI_INITIATIVESELLRATE_5min_ma": 0.4559598041685295,
+      "high_activity": 0.30113699089366897
+    }
+  }
+}

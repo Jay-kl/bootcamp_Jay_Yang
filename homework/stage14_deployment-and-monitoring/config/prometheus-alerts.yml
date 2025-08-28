@@ -1,0 +1,91 @@
+groups:
+  - name: trading_api_critical
+    rules:
+      - alert: HighAPILatency
+        expr: histogram_quantile(0.95, api_request_duration_seconds_bucket) > 0.025
+        for: 2m
+        labels:
+          severity: critical
+          team: ml-engineering
+        annotations:
+          summary: "High API latency detected"
+          description: "95th percentile latency is {{ $value }}s (threshold: 25ms)"
+          runbook_url: "https://wiki.company.com/runbooks/high-latency"
+          
+      - alert: HighErrorRate
+        expr: rate(api_requests_total{status=~"5.."}[5m]) / rate(api_requests_total[5m]) > 0.01
+        for: 1m
+        labels:
+          severity: critical
+          team: devops
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }}"
+          runbook_url: "https://wiki.company.com/runbooks/high-errors"
+          
+      - alert: ModelAccuracyDrop
+        expr: model_accuracy_score < 0.6
+        for: 5m
+        labels:
+          severity: critical
+          team: ml-engineering
+        annotations:
+          summary: "Critical model accuracy drop"
+          description: "Model accuracy is {{ $value | humanizePercentage }} (threshold: 60%)"
+          runbook_url: "https://wiki.company.com/runbooks/model-accuracy"
+
+  - name: trading_api_warning
+    rules:
+      - alert: DataStaleness
+        expr: data_freshness_seconds > 30
+        for: 30s
+        labels:
+          severity: warning
+          team: data-engineering
+        annotations:
+          summary: "Stale data detected"
+          description: "Data is {{ $value }} seconds old (threshold: 30s)"
+          runbook_url: "https://wiki.company.com/runbooks/data-freshness"
+          
+      - alert: HighCPUUtilization
+        expr: cpu_utilization_percent > 80
+        for: 5m
+        labels:
+          severity: warning
+          team: devops
+        annotations:
+          summary: "High CPU utilization"
+          description: "CPU utilization is {{ $value }}% (threshold: 80%)"
+          runbook_url: "https://wiki.company.com/runbooks/high-cpu"
+          
+      - alert: ModelConfidenceLow
+        expr: avg_over_time(prediction_confidence_avg[1h]) < 0.7
+        for: 10m
+        labels:
+          severity: warning
+          team: ml-engineering
+        annotations:
+          summary: "Low model prediction confidence"
+          description: "Average confidence is {{ $value | humanizePercentage }}"
+          runbook_url: "https://wiki.company.com/runbooks/low-confidence"
+
+  - name: trading_api_info
+    rules:
+      - alert: WeeklyModelReview
+        expr: day_of_week() == 1 and hour() == 9
+        labels:
+          severity: info
+          team: ml-engineering
+        annotations:
+          summary: "Weekly model performance review due"
+          description: "Time for weekly model performance assessment"
+          
+      - alert: CapacityPlanningReview
+        expr: avg_over_time(requests_per_second[24h]) > 8000
+        for: 1h
+        labels:
+          severity: info
+          team: devops
+        annotations:
+          summary: "High traffic - capacity review needed"
+          description: "Average RPS: {{ $value }} (planning threshold: 8000)"

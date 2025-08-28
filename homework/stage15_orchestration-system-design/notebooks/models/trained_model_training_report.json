@@ -1,0 +1,20 @@
+{
+  "metrics": {
+    "r2_score": 0.8992968676832939,
+    "rmse": 0.03879059837297919,
+    "model_type": "regression"
+  },
+  "training_metadata": {
+    "trained_at": "2025-08-28T15:48:18.810451",
+    "training_samples": 80,
+    "test_samples": 20,
+    "input_features": [
+      "S_LI_INITIATIVEBUYRATE",
+      "S_LI_LARGEBUYRATE",
+      "S_LI_LARGESELLRATE",
+      "buy_sell_ratio",
+      "large_order_imbalance"
+    ]
+  },
+  "processing_time_seconds": 0.5502440929412842
+}

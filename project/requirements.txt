@@ -1,2 +1,50 @@
-python-dotenv>=1.0.1
-rqdatac>=2.10.0; python_version>="3.9"
+# High-Frequency Trading Factor Prediction API - Stage 13 Requirements
+# Production-ready dependencies for model serving and API deployment
+
+# Core Data Science & ML
+pandas>=2.0.0
+numpy>=1.24.0
+scikit-learn>=1.3.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# API Framework
+Flask>=2.3.0
+Flask-CORS>=4.0.0
+
+# HTTP Client for Testing
+requests>=2.31.0
+
+# Data Serialization
+pickle5>=0.0.11; python_version < '3.8'
+
+# Performance & Monitoring
+prometheus-client>=0.17.0
+
+# Development & Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# Production Deployment
+gunicorn>=21.2.0
+waitress>=2.1.0
+
+# Security
+cryptography>=41.0.0
+
+# Configuration Management
+python-dotenv>=1.0.0
+PyYAML>=6.0
+
+# Logging & Monitoring
+structlog>=23.1.0
+
+# Type Hints
+typing-extensions>=4.7.0
+
+# Optional: GPU acceleration (uncomment if needed)
+# torch>=2.0.0
+# tensorflow>=2.13.0
+
+# Note: Pin versions in production deployment
+# This file provides minimum compatible versions for development

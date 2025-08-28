@@ -1,0 +1,20 @@
+{
+  "total_samples": 38579,
+  "feature_means": {
+    "S_LI_INITIATIVEBUYRATE": 0.47583873091578327,
+    "S_LI_LARGEBUYRATE": 0.0908245910987843,
+    "S_LI_LARGESELLRATE": 0.1108839731460121
+  },
+  "feature_stds": {
+    "S_LI_INITIATIVEBUYRATE": 0.08721888350942746,
+    "S_LI_LARGEBUYRATE": 0.06610691930062207,
+    "S_LI_LARGESELLRATE": 0.07354452374515423
+  },
+  "target_stats": {
+    "mean": 0.5241813058918063,
+    "std": 0.08717709793055145,
+    "median": 0.5243,
+    "min": 0.0,
+    "max": 1.0
+  }
+}
